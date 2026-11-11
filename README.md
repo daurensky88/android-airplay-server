@@ -1,3 +1,21 @@
+> **LILU AIR** — форк [jqssun/android-airplay-server](https://github.com/jqssun/android-airplay-server) (GPL-3.0, на базе [UxPlay](https://github.com/FDH2/UxPlay)).
+> Все заслуги по самому приёмнику принадлежат upstream. В этом форке изменены только название, иконка и баннер.
+>
+> Отличия от upstream:
+> - название приложения **LILU AIR**, фирменная иконка и баннер Android TV;
+> - `applicationId` = `kz.ailillu.liluair` — ставится рядом с оригиналом, не конфликтует;
+> - уведомление службы на русском.
+>
+> Настройки через ADB (из-за нового applicationId имя компонента указывается полностью):
+> ```
+> am broadcast -n kz.ailillu.liluair/io.github.jqssun.airplay.SettingsReceiver \
+>   -a io.github.jqssun.airplay.SET_SETTING --es key server_name --es value "LILU AIR"
+> ```
+>
+> Далее идёт оригинальный README.
+
+---
+
 # AirPlay Receiver for Android
 
 [![Stars](https://img.shields.io/github/stars/jqssun/android-airplay-server)](https://github.com/jqssun/android-airplay-server)

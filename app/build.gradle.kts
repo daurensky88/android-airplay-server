@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.jqssun.airplay"
+        applicationId = "kz.ailillu.liluair"
         minSdk = 23
         targetSdk = 37
         versionCode = 36
