@@ -18,6 +18,15 @@ android {
     compileSdk = 37
     ndkVersion = "27.0.12077973"
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("lilu-debug.keystore")
+            storePassword = "liluair"
+            keyAlias = "liluair"
+            keyPassword = "liluair"
+        }
+    }
+
     if (localProps.containsKey("storeFile")) {
         signingConfigs {
             create("release") {
