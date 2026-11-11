@@ -17,13 +17,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.jqssun.airplay.service.AirPlayService
 import io.github.jqssun.airplay.ui.MainScreen
+import io.github.jqssun.airplay.ui.SplashScreen
 import io.github.jqssun.airplay.ui.theme.AirPlayTheme
 import io.github.jqssun.airplay.viewmodel.LocalNetworkAccess
 import io.github.jqssun.airplay.viewmodel.MainViewModel
@@ -110,6 +115,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AirPlayTheme {
+                // Заставка показывается только при ручном запуске приложения;
+                // при автостарте службы вместе с телевизором UI не поднимается.
+                var splashDone by rememberSaveable { mutableStateOf(false) }
+                val splashOn by viewModel.pref(Prefs.SPLASH).collectAsState()
+                val splashSound by viewModel.pref(Prefs.SPLASH_SOUND).collectAsState()
+
                 MainScreen(
                     viewModel = viewModel,
                     isInPip = isInPip.value,
@@ -118,6 +129,10 @@ class MainActivity : ComponentActivity() {
                     onPip = { enterPip() },
                     onLocalNetwork = ::_requestLocalNetwork
                 )
+
+                if (!splashDone && splashOn && !isInPip.value) {
+                    SplashScreen(playSound = splashSound) { splashDone = true }
+                }
             }
         }
     }

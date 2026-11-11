@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.BrightnessHigh
 import androidx.compose.material3.*
+import io.github.jqssun.airplay.ui.theme.LiluColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -524,13 +525,20 @@ fun MainScreen(
                         visible = audioOnly && connections > 0 && tab != Tab.OVERVIEW,
                         onClick = { tab = Tab.OVERVIEW }
                     )
-                    NavigationBar {
+                    NavigationBar(containerColor = LiluColors.Bg, tonalElevation = 0.dp) {
                         Tab.entries.forEach { t ->
                             NavigationBarItem(
                                 selected = tab == t,
                                 onClick = { tab = t },
                                 icon = { Icon(t.icon, null) },
                                 label = { Text(stringResource(t.labelRes)) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = LiluColors.Text,
+                                    selectedTextColor = LiluColors.Text,
+                                    indicatorColor = LiluColors.SurfaceFocus,
+                                    unselectedIconColor = LiluColors.TextDim,
+                                    unselectedTextColor = LiluColors.TextDim,
+                                ),
                                 modifier = Modifier.dpadFocus()
                             )
                         }
@@ -623,7 +631,7 @@ private fun OverviewContent(
                 .weight(1f)
                 .padding(16.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(io.github.jqssun.airplay.ui.theme.LiluColors.BgDeep),
             contentAlignment = Alignment.Center
         ) {
             val connecting = state == ServerState.RUNNING && connections > 0 &&
@@ -635,26 +643,17 @@ private fun OverviewContent(
                     video()
                 }
                 if (state != ServerState.RUNNING || connections == 0) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = if (connections > 0) Icons.Default.CastConnected else Icons.Default.Cast,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        Text(
-                            text = if (grant) stringResource(R.string.local_network_desc) else when (state) {
-                                ServerState.STOPPED -> stringResource(R.string.server_stopped)
-                                ServerState.RUNNING -> stringResource(R.string.waiting_for_connection)
-                                ServerState.ERROR -> stringResource(R.string.error_starting_server)
-                            },
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 24.dp)
-                        )
-                    }
+                    CyberIdleScene(
+                        title = if (grant) stringResource(R.string.local_network_desc) else when (state) {
+                            ServerState.STOPPED -> stringResource(R.string.server_stopped)
+                            ServerState.RUNNING -> stringResource(R.string.waiting_for_connection)
+                            ServerState.ERROR -> stringResource(R.string.error_starting_server)
+                        },
+                        subtitle = if (state == ServerState.RUNNING) serverName else "",
+                        active = connections > 0,
+                        dimmed = state != ServerState.RUNNING,
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 } else if (connecting) {
                     Text(
                         text = stringResource(R.string.waiting_for_playback),
@@ -752,8 +751,15 @@ private fun OverviewContent(
                         state == ServerState.RUNNING -> Triple(Icons.Default.Stop, R.string.btn_stop, viewModel::stopServer)
                         else -> Triple(Icons.Default.PlayArrow, R.string.btn_start, viewModel::startServer)
                     }
+                    val stopping = state == ServerState.RUNNING && !grant
                     FilledTonalButton(
                         onClick = action,
+                        shape = RoundedCornerShape(11.dp),
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            // остановка сервера — действие с последствиями, поэтому розовая
+                            containerColor = if (stopping) Color(0xFF2A0E22) else LiluColors.Violet,
+                            contentColor = if (stopping) LiluColors.DangerSoft else Color.White,
+                        ),
                         modifier = Modifier.dpadFocus().focusRequester(startFocus)
                     ) {
                         Icon(

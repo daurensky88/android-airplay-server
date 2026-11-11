@@ -77,6 +77,8 @@ object Prefs {
     val AUTO_START = bool("auto_start", true)
     val BOOT_AUTO_START = bool("boot_auto_start", true)
     val RUN_IN_BACKGROUND = bool("run_in_background", true)
+    val SPLASH = bool("splash", true)
+    val SPLASH_SOUND = bool("splash_sound", true)
     val H265 = tri("h265", restart = true)
     val ENFORCE_SDR = bool("enforce_sdr", true, restart = true)
     val KEY_ALLOW_FRAME_DROP = bool(MediaFormat.KEY_ALLOW_FRAME_DROP, true, restart = true)

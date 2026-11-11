@@ -58,6 +58,8 @@ fun SettingsScreen(viewModel: MainViewModel) {
     val autoStart by viewModel.pref(Prefs.AUTO_START).collectAsState()
     val bootAutoStart by viewModel.pref(Prefs.BOOT_AUTO_START).collectAsState()
     val runInBackground by viewModel.pref(Prefs.RUN_IN_BACKGROUND).collectAsState()
+    val splash by viewModel.pref(Prefs.SPLASH).collectAsState()
+    val splashSound by viewModel.pref(Prefs.SPLASH_SOUND).collectAsState()
     val serverPort by viewModel.pref(Prefs.SERVER_PORT).collectAsState()
     val audioLatencyMs by viewModel.pref(Prefs.AUDIO_LATENCY_MS).collectAsState()
     val forceSwAlac by viewModel.pref(Prefs.FORCE_SW_ALAC).collectAsState()
@@ -115,6 +117,22 @@ fun SettingsScreen(viewModel: MainViewModel) {
             checked = runInBackground,
             onCheckedChange = { viewModel.set(Prefs.RUN_IN_BACKGROUND, it) }
         )
+
+        SettingSwitch(
+            title = stringResource(R.string.setting_splash),
+            description = stringResource(R.string.setting_splash_desc),
+            checked = splash,
+            onCheckedChange = { viewModel.set(Prefs.SPLASH, it) }
+        )
+
+        if (splash) {
+            SettingSwitch(
+                title = stringResource(R.string.setting_splash_sound),
+                description = stringResource(R.string.setting_splash_sound_desc),
+                checked = splashSound,
+                onCheckedChange = { viewModel.set(Prefs.SPLASH_SOUND, it) }
+            )
+        }
 
         SectionHeader(stringResource(R.string.section_connection))
 
@@ -459,10 +477,10 @@ private fun _openOverlaySettings(ctx: Context) {
 @Composable
 private fun SectionHeader(title: String) {
     Text(
-        text = title,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelSmall,
+        color = io.github.jqssun.airplay.ui.theme.LiluColors.TextDim,
+        modifier = Modifier.padding(start = 20.dp, end = 16.dp, top = 22.dp, bottom = 8.dp)
     )
 }
 
@@ -729,10 +747,18 @@ private fun SettingSwitch(
 ) {
     ListItem(
         modifier = Modifier
-            .dpadFocus(RectangleShape)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .dpadFocus(RoundedCornerShape(14.dp))
             .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
-        headlineContent = { Text(title) },
-        supportingContent = { Text(description) },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        headlineContent = { Text(title, style = MaterialTheme.typography.titleMedium) },
+        supportingContent = {
+            Text(
+                description,
+                style = MaterialTheme.typography.bodySmall,
+                color = io.github.jqssun.airplay.ui.theme.LiluColors.TextDim
+            )
+        },
         trailingContent = { Switch(checked = checked, onCheckedChange = null) }
     )
 }

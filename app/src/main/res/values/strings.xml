@@ -90,6 +90,10 @@
     <string name="setting_auto_start_desc">Start the AirPlay server when the app launches</string>
     <string name="setting_boot_auto_start">Start server at boot</string>
     <string name="setting_boot_auto_start_desc">Start the AirPlay server when the device starts</string>
+    <string name="setting_splash">Заставка при запуске</string>
+    <string name="setting_splash_desc">Показывать анимацию с логотипом при открытии приложения</string>
+    <string name="setting_splash_sound">Звук заставки</string>
+    <string name="setting_splash_sound_desc">Проигрывать звуковой акцент вместе с заставкой</string>
     <string name="setting_run_in_background">Run in background</string>
     <string name="setting_run_in_background_desc">Keep the server running after leaving the app</string>
 

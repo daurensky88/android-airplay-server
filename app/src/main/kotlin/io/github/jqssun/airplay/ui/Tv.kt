@@ -4,6 +4,7 @@ import android.app.UiModeManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import io.github.jqssun.airplay.ui.theme.LiluColors
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 fun Context.isTvDevice(): Boolean =
@@ -38,10 +40,18 @@ fun isTv(): Boolean {
     return remember(ctx) { ctx.isTvDevice() }
 }
 
+// На телевизоре мыши нет: человек ходит стрелками и должен мгновенно понимать,
+// где находится. Поэтому обводка бирюзовая — она контрастирует с фиолетовым
+// интерфейсом не только яркостью, но и цветом.
 fun Modifier.dpadFocus(shape: Shape = RoundedCornerShape(12.dp)): Modifier = composed {
     var focused by remember { mutableStateOf(false) }
     onFocusChanged { focused = it.isFocused }
-        .border(2.dp, if (focused) MaterialTheme.colorScheme.primary else Color.Transparent, shape)
+        .thenIf(focused) { background(LiluColors.SurfaceFocus, shape) }
+        .border(
+            if (focused) 3.dp else 0.dp,
+            if (focused) LiluColors.Cyan else Color.Transparent,
+            shape
+        )
 }
 
 fun Modifier.dpadAdjust(onLeft: () -> Unit, onRight: () -> Unit): Modifier = composed {
